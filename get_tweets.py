@@ -22,10 +22,10 @@ def get_emoji_sentiment(emoji):
 
 emo_tweets = {}
 for i in range(0, 3):
-    auth_params = {'q' : 'Katy Perry', 'count' : 100}
+    params = {'q' : 'Katy Perry', 'count' : 100}
     # See Twitter Search API documenation for description of cursoring for below if block
     if i > 0:
-        auth_params['max_id'] = max_id 
+        params['max_id'] = max_id 
     timeline_endpoint_baseuri = 'https://api.twitter.com/1.1/search/tweets.json?'
     timeline_endpoint = timeline_endpoint_baseuri + parse.urlencode(auth_params)
     print(timeline_endpoint)
