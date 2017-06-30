@@ -27,7 +27,7 @@ for i in range(0, 3):
     if i > 0:
         params['max_id'] = max_id 
     timeline_endpoint_baseuri = 'https://api.twitter.com/1.1/search/tweets.json?'
-    timeline_endpoint = timeline_endpoint_baseuri + parse.urlencode(auth_params)
+    timeline_endpoint = timeline_endpoint_baseuri + parse.urlencode(params)
     print(timeline_endpoint)
     response, data = client.request(timeline_endpoint)
     tweets_results = json.loads(data)
