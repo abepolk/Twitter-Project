@@ -31,8 +31,8 @@ class TwitterStream:
         self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
         self.conn = None
         self.buffer = ''
-        self.tweets = []
         self.setup_connection()
+        self.tweet_id = 0
         
     def setup_connection(self):
         # Create persistant HTTP connection to Streaming API endpoint using cURL.
@@ -60,7 +60,6 @@ class TwitterStream:
         req = oauth.Request(method='POST', parameters=params, url='%s?%s' % (API_ENDPOINT_URL,
                                                                              urllib.parse.urlencode(POST_PARAMS)))
         req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
-        print(req.to_header()['Authorization'])
         return req.to_header()['Authorization']
         
     def start(self):
@@ -111,23 +110,21 @@ class TwitterStream:
                 print('Got warning: %s' % message['warning'].get('message'))
             else:
                 # CHANGE THIS HERE TO WHAT YOU WANT TO DO INTO DATABASE
-                print('Got tweet: ' + len(tweets))
-                send_to_mongodb(message.get('text'))
+                print('Got tweet')
+                self.send_to_mongodb(message.get('text'))
                 
-    def send_to_mongodb(self, tweet_text)
-        client = pymongo.MongoClient(mongo_uri)
-        db = client.get_default_database()
-        if 'test' in db.collection_names():
-            db.drop_collection('test')
-        
-        
-
-                # THE NEXT STEP IS TO FIND SOME WAY TO TRANSFER THE INFORMATION FROM THE 
-                #TwitterStream OBJECT INTO THE DATABASE
+    def send_to_mongodb(self, tweet_text):
+        db.test.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
+        self.tweet_id += 1
             
 if __name__ == '__main__':
     ts = TwitterStream()
     ts.setup_connection()
+    client = pymongo.MongoClient(mongo_uri)
+    db = client.get_default_database()
+    if 'test' in db.collection_names():
+        db.drop_collection('test')
+    db.create_collection('test', capped = True, size = 1000000)
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
 #Cite: oauth2 module
