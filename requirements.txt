@@ -1,2 +1,3 @@
 oauth2
 pymongo
+pycurl
