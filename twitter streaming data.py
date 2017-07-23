@@ -4,6 +4,7 @@ import urllib
 import json
 import oauth2 as oauth
 import os
+import pymongo
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0'
@@ -20,7 +21,9 @@ OAUTH_KEYS = {'consumer_key': consumer_key,
               'access_token_secret': access_token_secret}
 
 POST_PARAMS = {'stall_warning': 'true',
-               'track': os.environ.get('KEYWORD')}\
+               'track': os.environ.get('KEYWORD')}
+               
+mongo_uri = 'mongodb://heroku_xgnhblcr:' + os.environ.get('MONGODB_PASSWORD') + '@ds149511.mlab.com:49511/heroku_xgnhblcr'
                
 class TwitterStream:
     def __init__(self):
@@ -108,14 +111,19 @@ class TwitterStream:
                 print('Got warning: %s' % message['warning'].get('message'))
             else:
                 # CHANGE THIS HERE TO WHAT YOU WANT TO DO INTO DATABASE
-                print('Got tweet')
-                self.tweets.append(message.get('text'))
-                print(self.tweets[-3:])  #THIS LINE HAS NOT BEEN TESTED,
-                #DON'T KNOW IF THE GLOBAL VAR tweets WORKS, BUT ANYWAY,
-                #THE NEXT STEP IS TO FIND SOME WAY TO TRANSFER THE INFORMATION FROM THE 
-                #TwitterStream OBJECT INTO THE DATABASE
+                print('Got tweet: ' + len(tweets))
+                send_to_mongodb(message.get('text'))
                 
-                # with text: %s' % message.get('text'))
+    def send_to_mongodb(self, tweet_text)
+        client = pymongo.MongoClient(mongo_uri)
+        db = client.get_default_database()
+        if 'test' in db.collection_names():
+            db.drop_collection('test')
+        
+        
+
+                # THE NEXT STEP IS TO FIND SOME WAY TO TRANSFER THE INFORMATION FROM THE 
+                #TwitterStream OBJECT INTO THE DATABASE
             
 if __name__ == '__main__':
     ts = TwitterStream()
