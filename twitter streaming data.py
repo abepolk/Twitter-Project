@@ -37,8 +37,6 @@ class TwitterStream:
     def collect_debug_info(debug_type, debug_msg):
         if debug_type == pycurl.INFOTYPE_HEADER_OUT:
             print(debug_msg)
-        if debug_type == pycurl.INFOTYPE_DATA_OUT:
-            print(debug_msg)
         
     def setup_connection(self):
         # Create persistant HTTP connection to Streaming API endpoint using cURL.
