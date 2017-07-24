@@ -34,6 +34,9 @@ class TwitterStream:
         self.setup_connection()
         self.tweet_id = 0
         
+        def test(debug_type, debug_msg):
+            print "debug(%d): %s" % (debug_type, debug_msg)
+        
     def setup_connection(self):
         # Create persistant HTTP connection to Streaming API endpoint using cURL.
         if self.conn:
@@ -48,10 +51,13 @@ class TwitterStream:
         self.conn.setopt(pycurl.POSTFIELDS, urllib.parse.urlencode(POST_PARAMS))
         self.conn.setopt(pycurl.HTTPHEADER, ['Host: stream.twitter.com',
                                              'Authorization: %s' % self.get_oauth_header()])
+        self.conn.setopt(pycurl.LOCALPORT, int(os.environ.get('PORT')))
+        self.conn.setopt(pycurl.DEBUGFUNCTION, CURLINFO_HEADER_OUT)
         # self.handle_tweet is the method that are called when new tweets arrive
         self.conn.setopt(pycurl.WRITEFUNCTION, self.handle_tweet)
+        
         print(os.environ.get('PORT'))
-        self.conn.setopt(pycurl.LOCALPORT, int(os.environ.get('PORT')))
+ 
 
 
     def get_oauth_header(self):
