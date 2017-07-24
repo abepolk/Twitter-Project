@@ -36,7 +36,7 @@ class TwitterStream:
         
     def collect_debug_info(self, debug_type, debug_msg):
         if debug_type == 0 and debug_msg.decode('utf-8')[0] == 'L':
-            sprint('debug(%s): %s' % (debug_type, debug_msg))
+            print('debug(%s): %s' % (debug_type, debug_msg))
         
     def setup_connection(self):
         # Create persistant HTTP connection to Streaming API endpoint using cURL.
