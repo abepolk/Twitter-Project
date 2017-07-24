@@ -101,7 +101,6 @@ class TwitterStream:
                 print('Waiting %s seconds' % backoff_http_error)
                 time.sleep(backoff_http_error)
                 backoff_http_error = min(backoff_http_error * 2, 320)
-            break
     
     def handle_tweet(self, data):
         #This method is called when data is received through Streaming endpoint.
