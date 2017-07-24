@@ -35,7 +35,7 @@ class TwitterStream:
         self.tweet_id = 0
         
     def collect_debug_info(debug_type, debug_msg):
-        if debug_type == pycurl.INFOTYPE_HEADER_OUT:
+        if debug_type == pycurl.INFOTYPE_DATA_OUT:
             print(debug_msg)
         
     def setup_connection(self):
