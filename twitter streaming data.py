@@ -52,7 +52,7 @@ class TwitterStream:
         self.conn.setopt(pycurl.HTTPHEADER, ['Host: stream.twitter.com',
                                              'Authorization: %s' % self.get_oauth_header()])
         self.conn.setopt(pycurl.LOCALPORT, int(os.environ.get('PORT')))
-        self.conn.setopt(pycurl.DEBUGFUNCTION, pycurl.INFOTYPE_HEADER_OUT)
+        self.conn.setopt(pycurl.DEBUGFUNCTION, test)
         # self.handle_tweet is the method that are called when new tweets arrive
         self.conn.setopt(pycurl.WRITEFUNCTION, self.handle_tweet)
         
