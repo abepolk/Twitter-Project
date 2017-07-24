@@ -35,7 +35,7 @@ class TwitterStream:
         self.tweet_id = 0
         
     def collect_debug_info(self, debug_type, debug_msg):
-        if debug_type == 0 and debug_message.encode('utf-8')[0] == 'L':
+        if debug_type == 0 and debug_msg.encode('utf-8')[0] == 'L':
             sprint('debug(%s): %s' % (debug_type, debug_msg))
         
     def setup_connection(self):
