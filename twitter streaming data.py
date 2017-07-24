@@ -35,7 +35,7 @@ class TwitterStream:
         self.tweet_id = 0
         
     def collect_debug_info(debug_type, debug_msg, third_param):
-        print("debug(%d): %s" % (debug_type, debug_msg))
+        print('debug(%s): %s' % (debug_type, debug_msg))
         
     def setup_connection(self):
         # Create persistant HTTP connection to Streaming API endpoint using cURL.
