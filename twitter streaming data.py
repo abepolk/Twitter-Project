@@ -50,7 +50,7 @@ class TwitterStream:
                                              'Authorization: %s' % self.get_oauth_header()])
         # self.handle_tweet is the method that are called when new tweets arrive
         self.conn.setopt(pycurl.WRITEFUNCTION, self.handle_tweet)
-        print(os.environ.get('PORT')
+        print(os.environ.get('PORT'))
         self.conn.setopt(pycurl.LOCALPORT, int(os.environ.get('PORT')))
 
 
