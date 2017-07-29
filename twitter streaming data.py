@@ -36,10 +36,10 @@ class TwitterStream:
         
     def collect_debug_info(self, debug_type, debug_msg):
         if debug_type == 0 and debug_msg.decode('utf-8')[0] == 'L':
-            print('debug(%s): %s' % (debug_type, debug_msg))
+            print('debug(%s): %s' % (debug_type, debug_msg.decode('utf-8')))
         
     def setup_connection(self):
-        # Create persistant HTTP connection to Streaming API endpoint using cURL.
+        # Creates persistent HTTP connection to Streaming API endpoint using cURL.
         if self.conn:
             self.conn.close()
             self.buffer = ''
@@ -55,7 +55,7 @@ class TwitterStream:
         self.conn.setopt(pycurl.LOCALPORT, int(os.environ.get('PORT')))
         self.conn.setopt(pycurl.VERBOSE, 1)
         self.conn.setopt(pycurl.DEBUGFUNCTION, self.collect_debug_info)
-        # self.handle_tweet is the method that are called when new tweets arrive
+        # self.handle_tweet is the method that is	 called when new tweets arrive
         self.conn.setopt(pycurl.WRITEFUNCTION, self.handle_tweet)
         
         print('Port var: %s' % os.environ.get('PORT'))
