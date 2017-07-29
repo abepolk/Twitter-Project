@@ -58,7 +58,7 @@ class TwitterStream:
         # self.handle_tweet is the method that are called when new tweets arrive
         self.conn.setopt(pycurl.WRITEFUNCTION, self.handle_tweet)
         
-        print(os.environ.get('PORT'))
+        print('Port var: %s' % os.environ.get('PORT'))
  
 
 
