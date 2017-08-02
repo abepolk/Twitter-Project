@@ -79,7 +79,6 @@ class TwitterStream:
         backoff_http_error = 5
         backoff_rate_limit = 60
         while True:
-            self.setup_connection()
             try:
                 self.conn.perform()
             except:
@@ -127,7 +126,6 @@ class TwitterStream:
             
 if __name__ == '__main__':
     ts = TwitterStream()
-    ts.setup_connection()
     client = pymongo.MongoClient(mongo_uri)
     db = client.get_default_database()
     if 'test' in db.collection_names():
