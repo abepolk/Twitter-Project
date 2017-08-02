@@ -1,1 +1,1 @@
-web: python3 "twitter streaming data.py"
+web: (python3 -m http.server $PORT &) && (python3 "twitter streaming data.py")
