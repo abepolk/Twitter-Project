@@ -21,7 +21,8 @@ OAUTH_KEYS = {'consumer_key': consumer_key,
               'access_token_secret': access_token_secret}
 
 POST_PARAMS = {'stall_warning': 'true',
-               'track': os.environ.get('KEYWORD')}
+               'track': os.environ.get('KEYWORD'),
+               'language' : 'en'}
                
 mongo_uri = 'mongodb://heroku_xgnhblcr:' + os.environ.get('MONGODB_PASSWORD') + '@ds149511.mlab.com:49511/heroku_xgnhblcr'
                
