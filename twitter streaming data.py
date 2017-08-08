@@ -121,16 +121,16 @@ class TwitterStream:
                 self.send_to_mongodb(message.get('text'))
                 
     def send_to_mongodb(self, tweet_text):
-        db.test.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
+        db.Justin_Bieber.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
         self.tweet_id += 1
             
 if __name__ == '__main__':
     ts = TwitterStream()
     client = pymongo.MongoClient(mongo_uri)
     db = client.get_default_database()
-    if 'Justin Bieber' in db.collection_names():
-        db.drop_collection('Justin Bieber')
-    db.create_collection('Justin Bieber', capped = True, size = 1000000)
+    if 'Justin_Bieber' in db.collection_names():
+        db.drop_collection('Justin_Bieber')
+    db.create_collection('Justin_Bieber', capped = True, size = 1000000)
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
 #Cite: oauth2 module
