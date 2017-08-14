@@ -78,6 +78,7 @@ class TwitterStream:
         backoff_network_error = 0.25
         backoff_http_error = 5
         backoff_rate_limit = 60
+        backoff_unauthorized = 320
         while True:
             try:
                 self.conn.perform()
@@ -94,6 +95,16 @@ class TwitterStream:
                 print('Rate limit, waiting %s seconds' % backoff_rate_limit)
                 time.sleep(backoff_rate_limit)
                 backoff_rate_limit *= 2
+            elif sc == 401:
+                # Unauthorized
+                print('401 Unauthorized')
+                print('Waiting %s seconds' % backoff_unauthorized)
+                print('OAuth header:')
+                print(self.get_oauth_header())
+                print('OAUTH_KEYS:')
+                print(OAUTH_KEYS)
+                time.sleep(backoff_unauthorized)
+                
             else:
                 # HTTP error, use exponential back off up to 320 seconds
                 print('HTTP error %s, %s' % (sc, self.conn.errstr()))
