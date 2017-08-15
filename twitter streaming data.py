@@ -5,6 +5,7 @@ import json
 import oauth2 as oauth
 import os
 import pymongo
+import ntptime
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0'
@@ -61,12 +62,16 @@ class TwitterStream:
         print('Port var: %s' % os.environ.get('PORT'))
  
 
+    def get_AWS_time()
+        c = ntplib.NTPClient()
+        response = c.request('0.amazon.pool.ntp.org')
+        return response.tx_time
 
     def get_oauth_header(self):
         # Create and return OAuth header.
         params = {'oauth_version': '1.0',
                   'oauth_nonce': oauth.generate_nonce(),
-                  'oauth_timestamp': str(time.time())}
+                  'oauth_timestamp': str(get_AWS_time())}
         req = oauth.Request(method='POST', parameters=params, url='%s?%s' % (API_ENDPOINT_URL,
                                                                              urllib.parse.urlencode(POST_PARAMS)))
         req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
