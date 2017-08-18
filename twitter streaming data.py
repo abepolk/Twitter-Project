@@ -98,6 +98,7 @@ class TwitterStream:
             if sc == 420:
                 # Rate limit, use exponential back off starting with 1 minute and double each attempt
                 print('Rate limit, waiting %s seconds' % backoff_rate_limit)
+                db.app_logs.insert_one('time' : get_AWS_time(), 'msg' : 'Rate limit reached')
                 time.sleep(backoff_rate_limit)
                 backoff_rate_limit *= 2
             elif sc == 401:
@@ -108,6 +109,7 @@ class TwitterStream:
                 print(self.get_oauth_header())
                 print('OAUTH_KEYS:')
                 print(OAUTH_KEYS)
+                db.app_logs.insert_one('time' : get_AWS_time(), 'msg' : 'Authorization error', 'notes' : 'Oauth header: %s \n Oauth Keys: %s' % (self.get_oauth_header, OAUTH_KEYS)
                 time.sleep(backoff_unauthorized)
                 
             else:
@@ -147,6 +149,7 @@ if __name__ == '__main__':
     if 'Justin_Bieber' in db.collection_names():
         db.drop_collection('Justin_Bieber')
     db.create_collection('Justin_Bieber', capped = True, size = 100000000)
+    db.create_collection('app_log', capped = True, size = 1000000)
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
 #Cite: oauth2 module
