@@ -98,7 +98,7 @@ class TwitterStream:
                 print('Network error: %s' % self.conn.errstr())
                 db.app_log.insert_one({'time' : get_AWS_time(), 'msg' : 'Network error: %s' % self.conn.errstr()})
                 print('Waiting %s seconds before trying again' % backoff_network_error)
-                if os.environ.get('SEND_EMAIL') = 'True' and 'network error' not in self.email_codes_sent:
+                if os.environ.get('SEND_EMAIL') == 'True' and 'network error' not in self.email_codes_sent:
                      self.email_codes_sent.append('network error')
                      send_notification('Network error: %s' % self.conn.errstr())
                 time.sleep(backoff_network_error)
@@ -110,7 +110,7 @@ class TwitterStream:
                 # Rate limit, use exponential back off starting with 1 minute and double each attempt
                 print('Rate limit, waiting %s seconds' % backoff_rate_limit)
                 db.app_log.insert_one({'time' : get_AWS_time(), 'msg' : 'Rate limit reached'})
-                if os.environ.get('SEND_EMAIL') = 'True' and '420 error' not in self.email_codes_sent:
+                if os.environ.get('SEND_EMAIL') == 'True' and '420 error' not in self.email_codes_sent:
                      self.email_codes_sent.append('420 error')
                      send_notification('420 Rate limit reached')
                 time.sleep(backoff_rate_limit)
@@ -124,7 +124,7 @@ class TwitterStream:
                 print('OAUTH_KEYS:')
                 print(OAUTH_KEYS)
                 db.app_log.insert_one({'time' : get_AWS_time(), 'msg' : 'Authorization error', 'notes' : 'Oauth header: %s \n Oauth Keys: %s' % (self.get_oauth_header, OAUTH_KEYS)})
-                if os.environ.get('SEND_EMAIL') = 'True' and '401 error' not in self.email_codes_sent:
+                if os.environ.get('SEND_EMAIL') == 'True' and '401 error' not in self.email_codes_sent:
                      self.email_codes_sent.append('401 error')
                      send_notification('401 Authentication error')
                 time.sleep(backoff_unauthorized)  
@@ -133,7 +133,7 @@ class TwitterStream:
                 print('HTTP error %s, %s' % (sc, self.conn.errstr()))
                 print('Waiting %s seconds' % backoff_http_error)
                 db.app_log.insert_one({'time' : get_AWS_time(), 'msg' : 'HTTP error %s, %s' % (sc, self.conn.errstr())})
-                if os.environ.get('SEND_EMAIL') = 'True' and 'misc http error' not in self.email_codes_sent:
+                if os.environ.get('SEND_EMAIL') == 'True' and 'misc http error' not in self.email_codes_sent:
                      self.email_codes_sent.append('misc http error')
                      send_notification('HTTP error %s, %s' % (sc, self.conn.errstr()))
                 time.sleep(backoff_http_error)
