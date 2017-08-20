@@ -161,7 +161,7 @@ class TwitterStream:
                 print('Got tweet')
                 self.send_to_mongodb(message.get('text'))
         
-    def send_notification(message):
+    def send_notification(self, message):
         from_email = Email('DoNotReply@example.com')
         subject = 'Twitterstream notification'
         to_email = os.environ.get('NOTIFICATION_EMAIL_ADDRESS')
