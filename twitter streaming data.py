@@ -69,7 +69,7 @@ class TwitterStream:
         #print('Port var: %s' % os.environ.get('PORT'))
  
 
-    def get_AWS_time():
+    def get_AWS_time(self):
         response = nclient.request('0.amazon.pool.ntp.org')
         return response.tx_time
 
