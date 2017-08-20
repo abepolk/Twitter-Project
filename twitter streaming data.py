@@ -70,7 +70,7 @@ class TwitterStream:
  
 
     def get_AWS_time(self):
-        response = nclient.request('0.amazon.pool.ntp.org')
+        response = mclient.request('0.amazon.pool.ntp.org')
         return response.tx_time
 
     def get_oauth_header(self):
