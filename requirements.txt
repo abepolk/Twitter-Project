@@ -2,3 +2,4 @@ oauth2
 pymongo
 pycurl
 ntplib
+sendgrid

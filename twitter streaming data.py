@@ -5,7 +5,7 @@ import json
 import oauth2 as oauth
 import os
 import pymongo
-import ntptime
+import ntplib
 import sendgrid
 from sendgrid.helpers.mail import *
 
