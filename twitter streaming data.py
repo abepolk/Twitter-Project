@@ -29,18 +29,24 @@ POST_PARAMS = {'stall_warning': 'true',
                'language' : 'en'}
                
 mongo_uri = 'mongodb://heroku_xgnhblcr:' + os.environ.get('MONGODB_PASSWORD') + '@ds149511.mlab.com:49511/heroku_xgnhblcr'
+
+search_term = 'Justin Biever'
+
+tweet_id = 0
                
 class TwitterStream:
     def __init__(self):
+        nclient = ntplib.NTPClient()
         self.oauth_token = oauth.Token(key=OAUTH_KEYS['access_token_key'], secret=OAUTH_KEYS['access_token_secret'])
         self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
         self.conn = None
         self.buffer = ''
-        self.tweet_id = 0
+        #self.tweet_id = 0
         # A list containing which email notifications received since the last connection
         # Prevents me from receiving duplicate emails
         self.email_codes_sent = []  
         self.setup_connection()
+        
         
     def collect_debug_info(self, debug_type, debug_msg): # Was used to debug an error with connecting to port
         if debug_type == 0 and debug_msg.decode('utf-8')[0] == 'L':
@@ -70,7 +76,7 @@ class TwitterStream:
  
 
     def get_AWS_time(self):
-        response = mclient.request('0.amazon.pool.ntp.org')
+        response = nclient.request('0.amazon.pool.ntp.org')
         return response.tx_time
 
     def get_oauth_header(self):
@@ -96,11 +102,13 @@ class TwitterStream:
             except:
                 # Network error, use linear back off up to 16 seconds
                 print('Network error: %s' % self.conn.errstr())
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Network error: %s' % self.conn.errstr()})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Network error: %s' % self.conn.errstr()})
+                observer_receive_log(self.get_AWS_time(), 'Network error: %s' % self.conn.errstr())
                 print('Waiting %s seconds before trying again' % backoff_network_error)
                 if os.environ.get('SEND_EMAIL') == 'True' and 'network error' not in self.email_codes_sent:
-                     self.email_codes_sent.append('network error')
-                     send_notification('Network error: %s' % self.conn.errstr())
+                    self.email_codes_sent.append('network error')
+                    #send_notification('Network error: %s' % self.conn.errstr())
+                    observer_send_notification(self.get_AWS_time(), 'Network error: %s' % self.conn.errstr())
                 time.sleep(backoff_network_error)
                 backoff_network_error = min(backoff_network_error + 1, 16)
 
@@ -109,10 +117,12 @@ class TwitterStream:
             if sc == 420:
                 # Rate limit, use exponential back off starting with 1 minute and double each attempt
                 print('Rate limit, waiting %s seconds' % backoff_rate_limit)
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Rate limit reached'})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Rate limit reached'})
+                observer_receive_log(self.get_AWS_time(), 'Rate limit reached')
                 if os.environ.get('SEND_EMAIL') == 'True' and '420 error' not in self.email_codes_sent:
-                     self.email_codes_sent.append('420 error')
-                     send_notification('420 Rate limit reached')
+                    self.email_codes_sent.append('420 error')
+                    #send_notification('420 Rate limit reached')
+                    observer_send_notification(self.get_AWS_time(), '420 Rate limit reached')
                 time.sleep(backoff_rate_limit)
                 backoff_rate_limit *= 2
             elif sc == 401:
@@ -123,19 +133,23 @@ class TwitterStream:
                 print(self.get_oauth_header())
                 print('OAUTH_KEYS:')
                 print(OAUTH_KEYS)
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Authorization error', 'notes' : 'Oauth header: %s \n Oauth Keys: %s' % (self.get_oauth_header, OAUTH_KEYS)})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Authorization error', 'notes' : 'Oauth header: %s \n Oauth Keys: %s' % (self.get_oauth_header, OAUTH_KEYS)})
+                observer_receive_log(self.get_AWS_time(), 'Authorization error', 'Oauth header: %s \n Oauth Keys: %s' % (self.get_oauth_header, OAUTH_KEYS))
                 if os.environ.get('SEND_EMAIL') == 'True' and '401 error' not in self.email_codes_sent:
                      self.email_codes_sent.append('401 error')
-                     send_notification('401 Authentication error')
+                     #send_notification('401 Authentication error')
+                     observer_send_notification(self.get_AWS_time(), '401 Authentication error')
                 time.sleep(backoff_unauthorized)  
             else:
                 # HTTP error, use exponential back off up to 320 seconds
                 print('HTTP error %s, %s' % (sc, self.conn.errstr()))
                 print('Waiting %s seconds' % backoff_http_error)
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'HTTP error %s, %s' % (sc, self.conn.errstr())})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'HTTP error %s, %s' % (sc, self.conn.errstr())})
+                observer_receive_log(self.get_AWS_time(), 'HTTP error %s, %s' % (sc, self.conn.errstr()))
                 if os.environ.get('SEND_EMAIL') == 'True' and 'misc http error' not in self.email_codes_sent:
-                     self.email_codes_sent.append('misc http error')
-                     send_notification('HTTP error %s, %s' % (sc, self.conn.errstr()))
+                    self.email_codes_sent.append('misc http error')
+                    #send_notification('HTTP error %s, %s' % (sc, self.conn.errstr()))
+                    observer_send_notification(self.get_AWS_time(), 'HTTP error %s, %s' % (sc, self.conn.errstr()))
                 time.sleep(backoff_http_error)
                 backoff_http_error = min(backoff_http_error * 2, 320)
     
@@ -150,43 +164,79 @@ class TwitterStream:
             msg = ''
             if message.get('limit'): # This rate limit is not an error - it just means how many tweets were tweeted that are not included in the stream since the last streamed tweet
                 print('Rate limiting caused us to miss %s tweets' % (message['limit'].get('track')))
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Missed tweets (rate limit)', 'notes' : '%s tweets' % message['limit'].get('track')})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Missed tweets (rate limit)', 'notes' : '%s tweets' % message['limit'].get('track')})
+                observer_receive_log(self.get_AWS_time, 'Missed tweets (rate limit)', '%s tweets' % message['limit'].get('track'))
             elif message.get('disconnect'):
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Disconnect', 'notes' : 'Reason: %s' % message['disconnect'].get('reason')})
-                raise Exception('Got disconnect: %s' % message['disconnect'].get('reason'))
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Disconnect', 'notes' : 'Reason: %s' % message['disconnect'].get('reason')})
+                observer_receive_log(self.get_AWS_time(), 'Disconnect', 
+                raise Exception('Got disconnect: %s' % message['disconnect'].get('reason')), 'Reason: %s' % message['disconnect'].get('reason'))
             elif message.get('warning'):
                 print('Got warning: %s' % message['warning'].get('message'))
-                db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Warning', 'notes' : 'Warning: %s' % message['warning'].get('message')})
+                #db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Warning', 'notes' : 'Warning: %s' % message['warning'].get('message')})
+                observer_receive_log(self.get_AWS_time(), 'Warning', 'Warning: %s' % message['warning'].get('message'))
             else:
                 print('Got tweet')
-                self.send_to_mongodb(message.get('text'))
+                #self.send_to_mongodb(message.get('text'))
+                observer_receive_tweet(message.get('text'))
         
-    def send_notification(self, message):
-        from_email = Email('DoNotReply@example.com')
-        subject = 'Twitterstream notification'
-        to_email = os.environ.get('NOTIFICATION_EMAIL_ADDRESS')
-        content = Content('text/plain', 'Twitterstream notification: %s' % message)
-        mail = Mail(from_email, subject, to_email, content)
-        try:
-            response = sg.client.mail.send.post(request_body=mail.get())
-        except Exception as e:
-            db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Notification email error', 'notes' : e.read()})
+ #   def send_notification(self, message):
+  #      from_email = Email('DoNotReply@example.com')
+   #     subject = 'Twitterstream notification'
+    #    to_email = os.environ.get('NOTIFICATION_EMAIL_ADDRESS')
+     #   content = Content('text/plain', 'Twitterstream notification: %s' % message)
+      #  mail = Mail(from_email, subject, to_email, content)
+       # try:
+        #    response = sg.client.mail.send.post(request_body=mail.get())
+        #except Exception as e:
+         #   db.app_log.insert_one({'time' : self.get_AWS_time(), 'msg' : 'Notification email error', 'notes' : e.read()})
                            
-    def send_to_mongodb(self, tweet_text):
-        db.Justin_Bieber.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
-        self.tweet_id += 1
+#    def send_to_mongodb(self, tweet_text): #Trying to take this out of the class
+#        db.Justin_Bieber.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
+#        self.tweet_id += 1
+        
+def observer_recieve_tweet(tweet_text):
+    send_to_mongodb(tweet_text, db, search_term)
+
+def observer_recieve_log(time, message, notes = None):
+    add_to_log(db, time, message, notes)
+    
+def observer_send_notification(time, message):
+    send_email(db, time, message)
+        
+
+def send_to_mongodb(tweet_text, db, collection): # take out 'self'
+    db.collection.insert_one({'id' :  tweet_id, 'text' : tweet_text})
+    tweet_id += 1
+    
+def add_to_log(db, time, message, notes):
+    log_entry = {'time' : time, 'msg' : message}
+    if notes:
+        log_entry['notes'] = notes
+    db.app_log.insert_one(log_entry)
+
+def send_email(db, time, message):
+    from_email = Email('DoNotReply@example.com')
+    subject = 'Twitterstream notification'
+    to_email = os.environ.get('NOTIFICATION_EMAIL_ADDRESS')
+    content = Content('text/plain', 'Twitterstream notification: %s' % message)
+    mail = Mail(from_email, subject, to_email, content)
+    try:
+        response = sgclient.client.mail.send.post(request_body=mail.get())
+    except Exception as e:
+        add_to_log(db, time, 'Notification email error', e.read()})
+    
             
 if __name__ == '__main__':
     ts = TwitterStream()
     mclient = pymongo.MongoClient(mongo_uri)
-    db = client.get_default_database()
-    if 'Justin_Bieber' in db.collection_names():
-        db.drop_collection('Justin_Bieber')
-    db.create_collection('Justin_Bieber', capped = True, size = 100000000)
+    db = mclient.get_default_database()
+    if search_term in db.collection_names():
+        db.drop_collection(search_term)
+    db.create_collection(search_term, capped = True, size = 100000000)
     if 'app_log' in db.collection_names():
         db.drop_collection('app_log')
     db.create_collection('app_log', capped = True, size = 1000000)
-    nclient = ntplib.NTPClient()
+    #nclient = ntplib.NTPClient()
     sgclient = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
