@@ -30,13 +30,13 @@ POST_PARAMS = {'stall_warning': 'true',
                
 mongo_uri = 'mongodb://heroku_xgnhblcr:' + os.environ.get('MONGODB_PASSWORD') + '@ds149511.mlab.com:49511/heroku_xgnhblcr'
 
-search_term = 'Justin Biever'
+search_term = 'Justin Bieber'
 
 tweet_id = 0
                
 class TwitterStream:
     def __init__(self):
-        nclient = ntplib.NTPClient()
+        self.nclient = ntplib.NTPClient()
         self.oauth_token = oauth.Token(key=OAUTH_KEYS['access_token_key'], secret=OAUTH_KEYS['access_token_secret'])
         self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
         self.conn = None
