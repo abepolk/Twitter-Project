@@ -33,7 +33,8 @@ class TwitterStream:
         self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
         self.conn = None
         self.buffer = ''
-        self.setup_connection()
+        #self.setup_connection()
+        print(self.get_AWS_time)
         self.tweet_id = 0
         
     def collect_debug_info(self, debug_type, debug_msg):
