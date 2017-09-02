@@ -34,7 +34,7 @@ class TwitterStream:
         self.conn = None
         self.buffer = ''
         #self.setup_connection()
-        print(self.get_AWS_time())
+        print('test')
         self.tweet_id = 0
         
     def collect_debug_info(self, debug_type, debug_msg):
