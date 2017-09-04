@@ -34,7 +34,7 @@ class TwitterStream:
         self.conn = None
         self.buffer = ''
         #self.setup_connection()
-        print('test')
+        print('test initialization method of TwitterStream')
         self.tweet_id = 0
         
     def collect_debug_info(self, debug_type, debug_msg):
@@ -142,7 +142,9 @@ class TwitterStream:
         self.tweet_id += 1
             
 if __name__ == '__main__':
+    print('test if name = main')
     ts = TwitterStream()
+    print('test TwitterStream initialized')
     client = pymongo.MongoClient(mongo_uri)
     db = client.get_default_database()
     if 'Justin_Bieber' in db.collection_names():
