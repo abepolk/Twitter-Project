@@ -34,8 +34,7 @@ class TwitterStream:
         self.conn = None
         self.buffer = ''
         self.tweet_id = 0
-        #self.setup_connection()
-        print(self.get_AWS_time())
+        self.setup_connection()
         
     def collect_debug_info(self, debug_type, debug_msg):
         if debug_type == 0 and debug_msg.decode('utf-8')[0] == 'L':
