@@ -5,7 +5,7 @@ import json
 import oauth2 as oauth
 import os
 import pymongo
-import ntptime
+import ntplib
 
 API_ENDPOINT_URL = 'https://stream.twitter.com/1.1/statuses/filter.json'
 USER_AGENT = 'TwitterStream 1.0'
