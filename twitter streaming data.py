@@ -33,9 +33,9 @@ class TwitterStream:
         self.oauth_consumer = oauth.Consumer(key=OAUTH_KEYS['consumer_key'], secret=OAUTH_KEYS['consumer_secret'])
         self.conn = None
         self.buffer = ''
-        #self.setup_connection()
-        print('test initialization method of TwitterStream')
         self.tweet_id = 0
+        #self.setup_connection()
+        print(self.get_AWS_time())
         
     def collect_debug_info(self, debug_type, debug_msg):
         if debug_type == 0 and debug_msg.decode('utf-8')[0] == 'L':
@@ -142,9 +142,7 @@ class TwitterStream:
         self.tweet_id += 1
             
 if __name__ == '__main__':
-    print('test if name = main')
     ts = TwitterStream()
-    print('test TwitterStream initialized')
     client = pymongo.MongoClient(mongo_uri)
     db = client.get_default_database()
     if 'Justin_Bieber' in db.collection_names():
