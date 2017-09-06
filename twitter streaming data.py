@@ -71,7 +71,7 @@ class TwitterStream:
         # Create and return OAuth header.
         params = {'oauth_version': '1.0',
                   'oauth_nonce': oauth.generate_nonce(),
-                  'oauth_timestamp': str(get_AWS_time())}
+                  'oauth_timestamp': str(self.get_AWS_time())}
         req = oauth.Request(method='POST', parameters=params, url='%s?%s' % (API_ENDPOINT_URL,
                                                                              urllib.parse.urlencode(POST_PARAMS)))
         req.sign_request(oauth.SignatureMethod_HMAC_SHA1(), self.oauth_consumer, self.oauth_token)
