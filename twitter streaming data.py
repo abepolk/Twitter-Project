@@ -93,6 +93,7 @@ class TwitterStream:
         backoff_unauthorized = 320
         while True:
             try:
+                self.setup_connection()
                 self.conn.perform()
             except:
                 # Network error, use linear back off up to 16 seconds
