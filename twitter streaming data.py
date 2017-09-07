@@ -66,7 +66,7 @@ class TwitterStream:
         c = ntplib.NTPClient()
         while True:
             try:
-                response = c.request('www.example.com') # Testing with wrong URL
+                response = c.request('0.amazon.pool.ntp.org')
             except ntplib.NTPException as e:
                 print ('NTPException: %s' % e)
                 continue
