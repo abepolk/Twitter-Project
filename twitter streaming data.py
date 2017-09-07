@@ -67,7 +67,7 @@ class TwitterStream:
         while True:
             try:
                 response = c.request('0.amazon.pool.ntp.orgq') # Testing with typo
-            except NTPException as e:
+            except ntplib.NTPException as e:
                 print ('NTPException: %s' % e)
                 continue
             break
