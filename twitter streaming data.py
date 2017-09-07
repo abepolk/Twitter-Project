@@ -141,7 +141,6 @@ class TwitterStream:
                 elif message.get('warning'):
                     print('Got warning: %s' % message['warning'].get('message'))
                 else:
-                    # CHANGE THIS HERE TO WHAT YOU WANT TO DO INTO DATABASE
                     print('Got tweet')
                     self.send_to_mongodb(message.get('text'))
         except json.decoder.JSONDecodeError as e:
