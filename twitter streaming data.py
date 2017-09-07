@@ -70,7 +70,7 @@ class TwitterStream:
             except ntplib.NTPException as e:
                 print ('NTPException: %s' % e)
                 continue
-                time.sleep(.25)
+                time.sleep(15)
             break
         return response.tx_time
 
