@@ -100,6 +100,7 @@ class TwitterStream:
                 print('Waiting %s seconds before trying again' % backoff_network_error)
                 time.sleep(backoff_network_error)
                 backoff_network_error = min(backoff_network_error + 1, 16)
+                continue
             # HTTP Error
             sc = self.conn.getinfo(pycurl.HTTP_CODE)
             if sc == 420:
