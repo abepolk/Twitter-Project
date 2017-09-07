@@ -64,7 +64,13 @@ class TwitterStream:
 
     def get_AWS_time(self):
         c = ntplib.NTPClient()
-        response = c.request('0.amazon.pool.ntp.org')
+        while True:
+            try:
+                response = c.request('0.amazon.pool.ntp.org')
+            except NTPException as e:
+                print ('NTPException: %s' % e)
+                continue
+            break
         return response.tx_time
 
     def get_oauth_header(self):
