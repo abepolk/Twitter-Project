@@ -128,21 +128,31 @@ class TwitterStream:
     def handle_tweet(self, data):
         #This method is called when data is received through Streaming endpoint.
         self.buffer += data.decode('UTF-8')
-        if data.decode('UTF-8').endswith('\r\n') and self.buffer.strip():
-            # complete message received
-            message = json.loads(self.buffer)
-            self.buffer = ''
-            msg = ''
-            if message.get('limit'):
-                print('Rate limiting caused us to miss %s tweets' % (message['limit'].get('track')))
-            elif message.get('disconnect'):
-                raise Exception('Got disconnect: %s' % message['disconnect'].get('reason'))
-            elif message.get('warning'):
-                print('Got warning: %s' % message['warning'].get('message'))
-            else:
-                # CHANGE THIS HERE TO WHAT YOU WANT TO DO INTO DATABASE
-                print('Got tweet')
-                self.send_to_mongodb(message.get('text'))
+        try:
+            if data.decode('UTF-8').endswith('\r\n') and self.buffer.strip():
+                # complete message received
+                message = json.loads(self.buffer)
+                self.buffer = ''
+                msg = ''
+                if message.get('limit'):
+                    print('Rate limiting caused us to miss %s tweets' % (message['limit'].get('track')))
+                elif message.get('disconnect'):
+                    raise Exception('Got disconnect: %s' % message['disconnect'].get('reason'))
+                elif message.get('warning'):
+                    print('Got warning: %s' % message['warning'].get('message'))
+                else:
+                    # CHANGE THIS HERE TO WHAT YOU WANT TO DO INTO DATABASE
+                    print('Got tweet')
+                    self.send_to_mongodb(message.get('text'))
+        except json.decoder.JSONDecodeError as e:
+            try:
+                print('JSONDecodeError: %s' % e)
+                print('First part of 5 lines of buffer:')
+                for line_num in range(0, 5):
+                    line = self.buffer.splitlines()[line_num]
+                    print(line[range(0, 50)])
+            except Exception as e:
+                print('JSONDecodeError handler not working: %s' % e)
                 
     def send_to_mongodb(self, tweet_text):
         db.Justin_Bieber.insert_one({'id' :  self.tweet_id, 'text' : tweet_text})
