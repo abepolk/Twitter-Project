@@ -150,7 +150,7 @@ class TwitterStream:
                 print('First part of 5 lines of buffer:')
                 for line_num in range(0, 5):
                     line = self.buffer.splitlines()[line_num]
-                    print(line[range(0, 50)])
+                    print(line[0:50])
             except Exception as e:
                 print('JSONDecodeError handler not working: %s' % e)
                 
