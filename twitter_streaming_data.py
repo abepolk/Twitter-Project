@@ -178,9 +178,9 @@ if __name__ == '__main__':
     ts = TwitterStream()
     client = pymongo.MongoClient(mongo_uri)
     db = client.get_default_database()
-    if 'Justin_Bieber' in db.collection_names():
-        db.drop_collection('Justin_Bieber')
-    db.create_collection('Justin_Bieber', capped = True, size = 100000000)
+    #if 'Justin_Bieber' in db.collection_names():
+    #    db.drop_collection('Justin_Bieber')
+    #db.create_collection('Justin_Bieber', capped = True, size = 100000000)
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
 #Cite: oauth2 module
