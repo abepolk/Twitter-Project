@@ -69,8 +69,8 @@ class TwitterStream:
                 response = c.request('0.amazon.pool.ntp.org')
             except ntplib.NTPException as e:
                 print ('NTPException: %s' % e)
-                continue
                 time.sleep(15)
+                continue
             break
         return response.tx_time
 
