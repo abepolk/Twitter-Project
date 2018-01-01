@@ -10,9 +10,7 @@ The file twitter_streaming_data.py contains a script that connects to the Twitte
 
 ## Assignment of emoji scores
 
-The analysis of the tweets was performed in the Jupyter notebook "Tweet analysis.ipynb"
-
-The tweets first were downloaded from mLab.  Tweets were then checked for emojis, and each emoji in each tweet was given a score based on the positive or negative sentiment of the emoji as defined in the emoji sentiment dictionary.  Tweets without emojis were dropped.  For each tweet, the emoji with the score with the highest absolute value was chosen as the overall score for that tweet.  In other words, the most positive or most negative score was chosen, whichever sentiment was stronger.
+The analysis of the tweets was performed in the Jupyter notebook "Tweet analysis.ipynb."  The tweets first were downloaded from mLab.  Tweets were then checked for emojis, and each emoji in each tweet was given a score based on the positive or negative sentiment of the emoji as defined in the emoji sentiment dictionary.  Tweets without emojis were dropped.  For each tweet, the emoji with the score with the highest absolute value was chosen as the overall score for that tweet.  In other words, the most positive or most negative score was chosen, whichever sentiment was stronger.
 
 ## Tweet preprocessing and tokenizing
 
@@ -21,7 +19,3 @@ Retweets (beginning with "RT") were dropped.  Accents and URLs were removed from
 ## Tweet vectorization and classification
 
 Preprocessed and tokenized tweets were then converted into document vectors.  Tf-idf was not used.  The document vectors for each tweet were then used to train a Multinomial NB classifier.  The categories were created from buckets based on the emoji score.  When three_class is set to true, a neutral category was created for when emoji scores fell within a threshold of zero.  Otherwise, the categories were solely determined by the sign of the emoji score.  The cross-validation scores for the model were calculated, both in terms of accuracy and F-score.  The model was then tested on three fake tweets representing each category.
-
-## Results
-
-The classifier 
