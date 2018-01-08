@@ -144,7 +144,7 @@ class TwitterStream:
         try:
             if data.decode('UTF-8').endswith('\r\n') and self.buffer.strip():
                 # complete message received
-                messages = self.generate_messages(self.buffer) # Could you do this without a separate generator function?
+                messages = self.generate_messages(self.buffer)
                 self.buffer = ''
                 for message in messages:
            #     message = json.loads(self.buffer)
@@ -183,4 +183,3 @@ if __name__ == '__main__':
     #db.create_collection('Justin_Bieber', capped = True, size = 100000000)
     ts.start()
 #Cite: http://www.arngarden.com/2012/11/07/consuming-twitters-streaming-api-using-python-and-curl/
-#Cite: oauth2 module
