@@ -1,6 +1,6 @@
 # Twitter sentiment analysis project
 
-## Introdution
+## Introduction
 
 A demonstration of a Naive Bayes (NB) sentiment analysis model.  The model is applied to hundreds of thousands of tweets containing the search term "Justin Bieber."  Each tweet containing emojis receives a "emoji sentiment score" based on the positivity or negativity of the emojis in the tweet.  To score each of these tweets, an "emoji sentiment dictionary" is used.  The dictionary was previously compiled (Kralj Novak, Petra; Smailović, Jasmina; Sluban, Borut; Mozetič, Igor, 2015) and is available at https://www.clarin.si/repository/xmlui/handle/11356/1048.  It is also copied into this repository.  The NB classifier is trained on the tweets with emojis.  After that, the model is k-fold cross-validated and tested on fake tweets coded into the script.
 
