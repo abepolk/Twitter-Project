@@ -6,7 +6,7 @@ A demonstration of a Naive Bayes (NB) sentiment analysis model.  The model is ap
 
 ## Obtaining the tweets
 
-The file twitter_streaming_data.py contains a script that connects to the Twitter Streaming API using the search term.  The script was deployed as a cloud-based app using the Heroku service.  The script first connects to the Twitter Streaming API using PycURL.  PycURL is Python's implementation of cURL, a tool in C that can be used to open a persistent HTTP connection to a server (here the Streaming API endpoint) and handle responses in a specified manner.  Error messages are handled and sent to a Papertrail on Heroku, a third-party app log service.  The text of tweets received is sent to mLab on Heroku, a third-party service providing cloud-based storage for MongoDB databases.  The size of the MongoDB is capped at 100 MB.
+The file twitter_streaming_data.py contains a script that connects to the Twitter Streaming API using the search term.  The script was deployed as a cloud-based app using the Heroku service.  The script first connects to the Twitter Streaming API using PycURL.  PycURL is Python's implementation of cURL, a tool in C that can be used to open a persistent HTTP connection to a server (here the Streaming API endpoint) and handle responses in a specified manner.  Error messages are handled and sent to Papertrail on Heroku, a third-party app log service.  The text of tweets received is sent to mLab on Heroku, a third-party service providing cloud-based storage for MongoDB databases.  The size of the MongoDB is capped at 100 MB.
 
 ## Assignment of emoji scores
 
